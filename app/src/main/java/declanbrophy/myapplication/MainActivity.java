@@ -16,6 +16,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -27,10 +28,41 @@ public class MainActivity extends AppCompatActivity {
         final EditText emailAddress,password;
         final Button register,signIn;
         final FirebaseAuth auth;
-
+        final FirebaseAuth.AuthStateListener AuthListener;
         final String Tag = "Main Activity";
 
         auth=FirebaseAuth.getInstance();
+
+        AuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                if (user != null) {
+                    //User is signed in
+                    Log.d(Tag, "User is signed in" +user.getUid());
+                }else {
+                    //User is signed out
+                    Log.d(Tag, "User is signed out");
+                }
+            }
+
+        };
+
+        @Override
+        public void onStart() {
+            super.onStart();
+            auth.addAuthStateListener(AuthListener);
+        }
+
+        @Override
+        public void onStop() {
+            super.onStop();
+            if (AuthListener != null) {
+                auth.removeAuthStateListener(AuthListener);
+            }
+        }
+
+
 
         emailAddress=(EditText) findViewById(R.id.emailAddress);
         password=(EditText) findViewById(R.id.password);
@@ -55,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
                     return;
                 }
 
-                
+
 
                 auth.signInWithEmailAndPassword(inputEmail,inputPassword)
                         .addOnCompleteListener(MainActivity.this, new OnCompleteListener<AuthResult>() {
