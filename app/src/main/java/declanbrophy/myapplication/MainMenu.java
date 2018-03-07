@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import static declanbrophy.myapplication.R.id.teamButton;
+
 public class MainMenu extends AppCompatActivity {
 
     @Override
@@ -26,6 +28,7 @@ public class MainMenu extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainMenu.this, CreateTeam.class);
+                startActivity(intent);
             }
         });
         //Brings user to view the team/teams that have been created
@@ -40,6 +43,7 @@ public class MainMenu extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainMenu.this, CreatePlayer.class);
+                startActivity(intent);
             }
         });
         //Brings user to player details that have been added to the team

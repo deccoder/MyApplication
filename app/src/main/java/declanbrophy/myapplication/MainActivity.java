@@ -25,120 +25,26 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        final EditText emailAddress,password;
-        final Button register,signIn;
-        final FirebaseAuth auth;
-        final FirebaseAuth.AuthStateListener AuthListener;
-        final String Tag = "Main Activity";
 
-        auth=FirebaseAuth.getInstance();
+        Button register = (Button) findViewById(R.id.register);
+        Button signIn = (Button) findViewById(R.id.signIn);
 
-        AuthListener = new FirebaseAuth.AuthStateListener() {
+        register.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-                if (user != null) {
-                    //User is signed in
-                    Log.d(Tag, "User is signed in" +user.getUid());
-                }else {
-                    //User is signed out
-                    Log.d(Tag, "User is signed out");
-                }
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, MainMenu.class);
+                startActivity(intent);
             }
-
-        };
-
-        @Override
-        public void onStart() {
-            super.onStart();
-            auth.addAuthStateListener(AuthListener);
-        }
-
-        @Override
-        public void onStop() {
-            super.onStop();
-            if (AuthListener != null) {
-                auth.removeAuthStateListener(AuthListener);
-            }
-        }
-
-
-
-        emailAddress=(EditText) findViewById(R.id.emailAddress);
-        password=(EditText) findViewById(R.id.password);
-        register=(Button) findViewById(R.id.register);
-        signIn=(Button) findViewById(R.id.signIn);
-
-
-
+        });
         signIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final String inputEmail = emailAddress.getText().toString();
-                final String inputPassword = password.getText().toString();
-
-                if (TextUtils.isEmpty(inputEmail)) {
-                    Toast.makeText(getApplicationContext(), "Enter email address", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                if (TextUtils.isEmpty(inputPassword)) {
-                    Toast.makeText(getApplicationContext(), "Enter password", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-
-
-                auth.signInWithEmailAndPassword(inputEmail,inputPassword)
-                        .addOnCompleteListener(MainActivity.this, new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if (!task.isSuccessful()) {
-                                    if (password.length() < 6) {
-                                        password.setError(getString(R.string.minimum_password));
-                                    }
-                                }
-                            }
-                        });
-                register.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        String inputEmail = emailAddress.getText().toString().trim();
-                        String inputPassword = password.getText().toString().trim();
-
-                        if (TextUtils.isEmpty(inputEmail)) {
-                            Toast.makeText(getApplicationContext(), "Enter email address", Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-
-                        if (TextUtils.isEmpty(inputPassword)) {
-                            Toast.makeText(getApplicationContext(), "Enter password", Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-
-                        if (password.length() < 6) {
-                            Toast.makeText(getApplicationContext(), "Minimum password length is 6 characters! Please try again", Toast.LENGTH_LONG).show();
-                            return;
-                        }
-                        auth.createUserWithEmailAndPassword(inputEmail,inputPassword)
-                                .addOnCompleteListener(MainActivity.this, new OnCompleteListener<AuthResult>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<AuthResult> task) {
-                                        Toast.makeText(MainActivity.this, "Registered Successfully" +task.isSuccessful(), Toast.LENGTH_SHORT).show();
-
-                                        if (!task.isSuccessful()) {
-                                            Toast.makeText(MainActivity.this, "Authentication Failed" +task.getException(), Toast.LENGTH_SHORT).show();
-                                        }else {
-                                            startActivity(new Intent(MainActivity.this, MainMenu.class));
-                                            finish();
-                                        }
-                                    }
-
-
-                                });
-                    }
-                });
+                Intent intent = new Intent(MainActivity.this, MainMenu.class);
+                startActivity(intent);
             }
         });
+
+
+
     }
 }
