@@ -8,10 +8,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class CreateTeam extends AppCompatActivity {
 
@@ -19,14 +23,14 @@ public class CreateTeam extends AppCompatActivity {
     EditText teamName, systemAdmin, address, email;
     DatabaseReference databaseReference;
     private static String teamId;
-    ArrayList<teams> teams;
+    List<Team> teamOne;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_team);
 
-        teams = new ArrayList<teams>();
+        teamOne = new ArrayList<Team>();
         databaseReference = FirebaseDatabase.getInstance().getReference("teams");
 
         save = (Button) findViewById(R.id.save);
@@ -42,28 +46,58 @@ public class CreateTeam extends AppCompatActivity {
 
                 if (TextUtils.isEmpty(teamId)) {
                     String teamId = databaseReference.push().getKey();
-                    teams teams = new teams(teamId,name);
+                    Team teams = new Team(teamId,name);
                     databaseReference.child(teamId).setValue(teams);
                 }else if (TextUtils.isEmpty(teamId)){
                     String sAdmin = systemAdmin.getText().toString();
                     String teamId = databaseReference.push().getKey();
-                    teams teams = new teams(teamId,sAdmin);
+                    Team teams = new Team(teamId,sAdmin);
                     databaseReference.child(teamId).setValue(teams);
                 }else if (TextUtils.isEmpty(teamId)){
                     String teamId = databaseReference.push().getKey();
                     String teamAddress = address.getText().toString();
-                    teams teams = new teams(teamId,teamAddress);
+                    Team teams = new Team(teamId,teamAddress);
                     databaseReference.child(teamId).setValue(teams);
-                }else {
+                }else if (TextUtils.isEmpty(teamId)){
                     String teamEmail = email.getText().toString();
                     String teamId = databaseReference.push().getKey();
-                    teams teams = new teams(teamId,teamEmail);
+                    Team teams = new Team(teamId,teamEmail);
                     databaseReference.child(teamId).setValue(teams);
 
                     Toast.makeText(CreateTeam.this,"Team created successfully", Toast.LENGTH_SHORT).show();
                 }
 
+                    teamName.setText(null);
+                        systemAdmin.setText(null);
+                        address.setText(null);
+                        email.setText(null);
+            }
+        });
+
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                teamOne.clear();
+
+                for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
+                    Team teams = postSnapshot.getValue(Team.class);
+                    teamOne.add(teams);
+
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
             }
         });
     }
 }
+
