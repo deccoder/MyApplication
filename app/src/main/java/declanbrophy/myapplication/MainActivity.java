@@ -20,27 +20,34 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class MainActivity extends AppCompatActivity {
 
+    Button register,signIn;
+    EditText emailAddress, password;
+    FirebaseAuth mAuth;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mAuth= FirebaseAuth.getInstance();
 
-        Button register = (Button) findViewById(R.id.register);
-        Button signIn = (Button) findViewById(R.id.signIn);
+
+
+        register = (Button) findViewById(R.id.register);
+        signIn = (Button) findViewById(R.id.signIn);
 
         register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, MainMenu.class);
+                Intent intent = new Intent(MainActivity.this, CreateTeam.class);
                 startActivity(intent);
+                finish();
             }
         });
         signIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, MainMenu.class);
-                startActivity(intent);
+
             }
         });
 

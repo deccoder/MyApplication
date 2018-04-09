@@ -3,7 +3,9 @@ package declanbrophy.myapplication;
 
 import android.widget.EditText;
 
-public class Team {
+import java.io.Serializable;
+
+public class Team implements Serializable {
 
     private String systemAdmin;
     private String teamName;
@@ -11,11 +13,13 @@ public class Team {
     private String email;
     private String id;
 
+    public Team(){
 
-    public Team(String teamId, String name) {
     }
 
 
+    public Team(String name, String sAdmin, String location, String contact) {
+    }
 
     public Team(String systemAdmin, String teamName, String address, String email, String id) {
         this.systemAdmin = systemAdmin;

@@ -21,17 +21,16 @@ public class CreateTeam extends AppCompatActivity {
 
     Button save;
     EditText teamName, systemAdmin, address, email;
-    DatabaseReference databaseReference;
-    private static String teamId;
-    List<Team> teamOne;
+    DatabaseReference teamDetails;
+    Team teamOne;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_team);
 
-        teamOne = new ArrayList<Team>();
-        databaseReference = FirebaseDatabase.getInstance().getReference("teams");
+        teamOne = new Team();
+        teamDetails = FirebaseDatabase.getInstance().getReference("teams");
 
         save = (Button) findViewById(R.id.save);
         teamName = (EditText) findViewById(R.id.teamName);
@@ -42,62 +41,38 @@ public class CreateTeam extends AppCompatActivity {
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                addTeam();
+
                 String name = teamName.getText().toString();
+                String sAdmin = systemAdmin.getText().toString();
+                String location = address.getText().toString();
+                String contact = email.getText().toString();
 
-                if (TextUtils.isEmpty(teamId)) {
-                    String teamId = databaseReference.push().getKey();
-                    Team teams = new Team(teamId,name);
-                    databaseReference.child(teamId).setValue(teams);
-                }else if (TextUtils.isEmpty(teamId)){
-                    String sAdmin = systemAdmin.getText().toString();
-                    String teamId = databaseReference.push().getKey();
-                    Team teams = new Team(teamId,sAdmin);
-                    databaseReference.child(teamId).setValue(teams);
-                }else if (TextUtils.isEmpty(teamId)){
-                    String teamId = databaseReference.push().getKey();
-                    String teamAddress = address.getText().toString();
-                    Team teams = new Team(teamId,teamAddress);
-                    databaseReference.child(teamId).setValue(teams);
-                }else if (TextUtils.isEmpty(teamId)){
-                    String teamEmail = email.getText().toString();
-                    String teamId = databaseReference.push().getKey();
-                    Team teams = new Team(teamId,teamEmail);
-                    databaseReference.child(teamId).setValue(teams);
-
-                    Toast.makeText(CreateTeam.this,"Team created successfully", Toast.LENGTH_SHORT).show();
-                }
-
-                    teamName.setText(null);
-                        systemAdmin.setText(null);
-                        address.setText(null);
-                        email.setText(null);
+                teamOne.setTeamName(name);
+                teamOne.setSystemAdmin(sAdmin);
+                teamOne.setAddress(location);
+                teamOne.setEmail(contact);
             }
         });
 
 
+
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
+private void addTeam(){
+    String name = teamName.getText().toString();
+    String sAdmin = systemAdmin.getText().toString();
+    String location = address.getText().toString();
+    String contact = email.getText().toString();
 
-        databaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                teamOne.clear();
+    String id = teamDetails.push().getKey();
 
-                for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
-                    Team teams = postSnapshot.getValue(Team.class);
-                    teamOne.add(teams);
+    Team teamOne = new Team(name, sAdmin, location, contact);
 
-                }
-            }
+    teamDetails.child(id).setValue(teamOne);
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+    Toast.makeText(CreateTeam.this, "Team Details Saved", Toast.LENGTH_LONG).show();
+}
 
-            }
-        });
-    }
 }
 
